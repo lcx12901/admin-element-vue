@@ -65,9 +65,10 @@ export default {
             this.$refs[formName].validate( async (valid) => {
             if (valid) {
                 const {name:username, pass:password} = this.ruleForm
-                const result = await reqLogin({username, password})
-                if (result) {
-                    sessionStorage.setItem('token', result.token)
+                const {data, meta} = await reqLogin({username, password})
+                if (meta.status == 200) {
+                    sessionStorage.setItem('token', data.token)
+                    sessionStorage.setItem('uid', data.id)
                     this.$router.push('/welcome')
                 }
             } else {
