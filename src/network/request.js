@@ -14,20 +14,21 @@ export const request = (options) => {
 
     // 响应拦截
     inst.interceptors.response.use(data => {
-        const {data:result, meta} = data.data
-        if (meta.status == 200) {
+        let {meta} = data.data
+        if (meta.status == 200 || meta.status == 201) {
             meta.type = 'success'
         }
-        if (meta.status == 400 || meta.status == 404 ) {
+        if (meta.status == 400 || meta.status == 401 || meta.status == 404 ) {
             meta.type = 'error'
         }
         Vue.prototype.$message({
+            duration: 1000,
             showClose: true,
             message: meta.msg,
             type: meta.type,
             center: true
         })
-        return result
+        return data.data
     })
 
     return inst(options)
