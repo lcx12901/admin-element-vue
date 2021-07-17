@@ -92,8 +92,8 @@ export default {
         },
         // 获取左侧菜单
         async getMenu () {
-            this.menus = await reqMenus()
-
+            const {data} = await reqMenus()
+            this.menus = data
         },
         // 点击侧边栏激活当前路由
         setActiveItem (path) {
