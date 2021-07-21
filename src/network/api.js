@@ -44,6 +44,9 @@ export const reqGood = (id) => request({url: `/goods/${id}`});
 // 获取商品分类
 export const reqCategories = (params) => request({url: '/categories', params});
 
+// 添加商品分类
+export const reqAddCategories = (data) => request({url: '/categories', method: 'post', data})
+
 // 获取商品分类对应参数  categories/:id/attributes
 export const reqAttributes = (id, sel) => request({url: `/categories/${id}/attributes`, params: {sel}});
 
@@ -64,4 +67,4 @@ export const reqDeleteGood = (id) => request({url: `/goods/${id}`, method: 'dele
 
 
 // reports/type/1
-export const reqReport = () => request({url: 'reports/type/1'});
+export const reqReport = () => request({url: '/reports/type/1'});
