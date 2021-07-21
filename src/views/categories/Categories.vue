@@ -11,7 +11,7 @@
                 <template slot="isOk" slot-scope="{row}">
                     <i class="el-icon-success" style="color: greenyellow" v-if="!row.cat_deleted"></i>
                     <i class="el-icon-error" style="color: red" v-else></i>
-                   </template>
+                </template>
                 <template slot="order" slot-scope="{row}">
                     <el-tag size="mini" v-if="row.cat_level == 0">一级</el-tag>
                     <el-tag size="mini" type="success" v-else-if="row.cat_level == 1">二级</el-tag>
