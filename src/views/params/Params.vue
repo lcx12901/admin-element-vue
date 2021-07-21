@@ -24,7 +24,7 @@
                         :tabActive="tabActive"
                         :chooseCate="chooseCate"
                         :cateTable="cateTable"
-                        @getAttributes="getAttributes"    
+                        :getAttributes="getAttributes"    
                     >
                     </params-data>
                 </el-tab-pane>
