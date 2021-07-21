@@ -32,6 +32,9 @@ export const reqRoles = () => request({url: '/roles', method: 'get'});
 // 分配用户角色
 export const reqSetUserRole = (id,rid) => request({url: `users/${id}/role`, method: 'put', data: {rid}});
 
+// 所有权限列表
+export const reqRights = (type) => request({url: `rights/${type}`});
+
 // 商品列表数据
 export const reqGoods = (params) => request({url: '/goods', params});
 
@@ -58,3 +61,7 @@ export const reqAddGood = (data) => request({url: '/goods', method: 'post', data
 
 // 删除商品
 export const reqDeleteGood = (id) => request({url: `/goods/${id}`, method: 'delete'});
+
+
+// reports/type/1
+export const reqReport = () => request({url: 'reports/type/1'});
