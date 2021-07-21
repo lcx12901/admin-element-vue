@@ -5,9 +5,9 @@ import store from './store'
 import ElementUI from 'element-ui';
 import './plugins/element.js'
 import 'element-ui/lib/theme-chalk/index.css';
-import 'nprogress/nprogress.css'
+import 'nprogress/nprogress.css';
 
-
+import 'utils/filter'
 
 Vue.config.productionTip = false
 Vue.use(ElementUI);
