@@ -38,8 +38,8 @@
             @closed="closeAddDialog()"
             :visible.sync="addCateDialog"
         >
-            <el-form :model="addCateForm" :rules="addCateRules" label-position="right">
-                <el-form-item label="分类名称">
+            <el-form :model="addCateForm" :rules="addCateRules" label-position="left" ref="addCateForm">
+                <el-form-item label="分类名称" prop="cat_name">
                     <el-input type="name" v-model="addCateForm.cat_name" autocomplete="off"></el-input>
                 </el-form-item>
                 <el-form-item label="父级分类">
@@ -53,12 +53,16 @@
                     </el-cascader>
                 </el-form-item>
             </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="closeDialog">取 消</el-button>
+                <el-button type="primary" @click="addCategories">确 定</el-button>
+            </div>
         </el-dialog>
     </div>
 </template>
 
 <script>
-import {reqCategories} from 'network/api.js'
+import {reqCategories, reqAddCategories} from 'network/api.js'
 
 export default {
     name: 'Categories',
@@ -93,13 +97,17 @@ export default {
                 }
             ],
             addCateDialog: false,
-            categories: [],
-            addCascader: [],
+            categories: [],  // 选中的商品分类
+            addCascader: [], // 商品分类级联选择器
             addCateForm: {
                 cat_pid: 0,
                 cat_name: '',
                 cat_level: 0
-                
+            },
+            addCateRules: {
+                cat_name: [
+                    {required: true, message: '请输入分类名称', trigger: 'blur'}
+                ]
             }
         }
     },
@@ -125,11 +133,32 @@ export default {
         // 显示添加分类dialog
         async showAddDiaolog () {
             this.addCateDialog = true
-            this.cate_params.type = 2
-            const {data} = await reqCategories(this.cate_params)
-            this.addCascader = data.result
-            this.cate_params.type = 3
+            const {data} = await reqCategories({type: 2})
+            this.addCascader = data
         },
+        // 关闭添加分类的dialog
+        closeDialog () {
+            this.addCateDialog = false  // 关闭dialog
+            this.addCateForm = {  // 初始化表单
+                cat_pid: 0,
+                cat_name: '',
+                cat_level: 0
+            }
+            this.categories = []  // 清空商品分类选中列表
+        },
+        // 添加商品分类
+        addCategories () {
+            this.$refs['addCateForm'].validate( async (valid) => {
+                if (valid) {
+                    this.addCateForm.cat_pid = this.categories.length == 0 ? 0 : this.categories[this.categories.length - 1]
+                    this.addCateForm.cat_level = this.categories.length
+                    const {meta} = await reqAddCategories(this.addCateForm)
+                    if (meta.status != 201) return
+                    this.getCategories()
+                    this.addCateDialog = false
+                }
+            })
+        }
     }
 }
 </script>
