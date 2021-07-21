@@ -53,7 +53,13 @@
                     </el-menu>
                 </el-aside>
                 <el-main>
-                    <router-view/>
+                    <!-- 面包屑 导航栏 -->
+                    <el-breadcrumb separator="/">
+                        <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
+                        <el-breadcrumb-item>{{getBreadcrumb[0]}}</el-breadcrumb-item>
+                        <el-breadcrumb-item>{{getBreadcrumb[1]}}</el-breadcrumb-item>
+                    </el-breadcrumb>
+                    <router-view></router-view>
                 </el-main>
 
             </el-container>
@@ -94,10 +100,26 @@ export default {
         async getMenu () {
             const {data} = await reqMenus()
             this.menus = data
+           
         },
         // 点击侧边栏激活当前路由
         setActiveItem (path) {
             this.activeItem = `/${path}`
+        }
+    },
+    computed: {
+        getBreadcrumb () {
+            const path = this.$route.path
+            if (path == '/users') return ['用户管理', '用户列表']
+            if (path == '/roles') return ['权限管理', '角色列表']
+            if (path == '/rights') return ['权限管理', '权限列表']
+            if (path == '/goods') return ['商品管理', '商品列表']
+            if (path == '/goods/addGood') return ['商品管理', '添加商品']
+            if (path == '/params') return ['商品管理', '分类参数']
+            if (path == '/categories') return ['商品管理', '商品分类']
+            if (path == '/orders') return ['订单管理', '订单列表']
+            if (path == '/reports') return ['数据统计', '数据报表']
+            return ['你在哪', '我又在哪']
         }
     }
 }
@@ -150,6 +172,24 @@ export default {
 
             .el-main{
                 background-color: #eaedf1;
+
+            .container {
+                margin-top: 20px;
+                border-radius: 20px;
+
+                .search {
+                    .input-item {
+                        width: 30%;
+
+                        div {
+                            width: 100%;
+                        }
+                    }
+                }
+                .pagination {
+                    margin-top: 20px;
+                }
+            }
             }
         }
     }
