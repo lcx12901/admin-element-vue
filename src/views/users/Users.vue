@@ -1,18 +1,12 @@
 <template>
     <div class="users">
-        <!-- 面包屑 导航栏 -->
-        <el-breadcrumb separator="/">
-            <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-            <el-breadcrumb-item>用户管理</el-breadcrumb-item>
-            <el-breadcrumb-item>用户列表</el-breadcrumb-item>
-        </el-breadcrumb>
         <!-- 页面内容容器 -->
-        <el-card class="user-container" shadow="hover">
+        <el-card class="container" shadow="hover">
             <div>
                 <!-- 数据搜索栏、添加用户功能 -->
-                <el-form :inline="true" :model="formInline" class="demo-form-inline">
+                <el-form :inline="true" class="search">
                     <el-form-item  class="input-item">
-                        <el-input v-model="formInline.query" placeholder="请输入内容"></el-input>
+                        <el-input v-model="query" placeholder="请输入内容"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" plain @click="searchQuery">查询</el-button>
@@ -154,7 +148,7 @@
 <script>
 import {
     reqUsers,
-    reqUser, 
+    // reqUser, 
     reqAddUser, 
     reqChangeState, 
     reqEditUser, 
@@ -192,9 +186,7 @@ export default {
             return callback()
         }
         return {
-            formInline: {
-                query: ''
-            },
+            query: '',
             pagenum: 1,
             pagesize: 3,
             currentpage: 1,
@@ -265,6 +257,7 @@ export default {
         // 获取用户数据列表
         async getUsers () {
             const {data} = await reqUsers({
+                query: this.query,
                 pagenum: this.pagenum, 
                 pagesize: this.pagesize
             })
@@ -278,32 +271,8 @@ export default {
         },
         // 用户关键字搜索
         async searchQuery () {
-            const {query} = this.formInline
-            if (!query) {
-                this.$message({
-                    message: '未填写关键字',
-                    type: 'info'
-                })
-            } else {
-                console.log(!isNaN(Number(query)))
-                // 判断是否根据用户Id查询
-                if (!isNaN(Number(query))) {
-                    console.log('nnkj')
-                    const {data} = await reqUser(query)
-                    this.pagenum = 1
-                    this.users = [data]
-                    this.total = 1
-                }  else {
-                    const {data} = await reqUsers({
-                        query,
-                        pagenum: this.pagenum,
-                        pagesize: this.pagesize
-                    })
-                    this.pagenum = data.pagenum
-                    this.users = data.users
-                    this.total = data.total
-                }
-            }
+            this.pagenum = 1
+            this.getUsers()
         },
         // 添加用户
         addUser (formName) {
@@ -326,7 +295,7 @@ export default {
         // 修改用户登录权限
         async changeMgState (user) {
             const {username, id, mg_state:type} = user
-            if (username == 'admin') {
+            if ( username == 'admin' && sessionStorage.getItem('uid') != 500 ) {
                 this.$message({
                     message: '无法修改管理员权限',
                     type: 'error'
@@ -446,23 +415,7 @@ export default {
 
 <style lang="less">
     .users {
-        .user-container {
-            margin-top: 20px;
-            border-radius: 10px;
 
-            .demo-form-inline {
-                .input-item {
-                    width: 30%;
-
-                    div {
-                        width: 100%;
-                    }
-                }
-            }
-            .user-pagination {
-                margin-top: 20px;
-            }
-        }
 
         .dialog-form {
             display: flex;
