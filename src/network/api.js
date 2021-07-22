@@ -45,7 +45,13 @@ export const reqGood = (id) => request({url: `/goods/${id}`});
 export const reqCategories = (params) => request({url: '/categories', params});
 
 // 添加商品分类
-export const reqAddCategories = (data) => request({url: '/categories', method: 'post', data})
+export const reqAddCategories = (data) => request({url: '/categories', method: 'post', data});
+
+// 编辑商品分类
+export const reqEditCategories = (id, cat_name) => request({url: `/categories/${id}`, method: 'put', data: {cat_name}});
+
+// 删除商品分类
+export const reqDeleteCategories = (id) => request({url: `categories/${id}`, method: 'delete'});
 
 // 获取商品分类对应参数  categories/:id/attributes
 export const reqAttributes = (id, sel) => request({url: `/categories/${id}/attributes`, params: {sel}});
@@ -65,6 +71,17 @@ export const reqAddGood = (data) => request({url: '/goods', method: 'post', data
 // 删除商品
 export const reqDeleteGood = (id) => request({url: `/goods/${id}`, method: 'delete'});
 
+// 编辑商品提交
+export const reqEditGood = (data) => request({url: `/goods/${data.id}`, method: 'put', data});
+
+// 获取订单列表
+export const reqOrders = (params) => request({url: '/orders', params});
+
+// 修改订单状态
+export const reqEditOrder = (data) => request({url: `orders/${data.id}`, method: 'put', data});
+
+// 查看订单详情
+export const reqOrderInfo = (id) => request({url: `orders/${id}`}); 
 
 // reports/type/1
 export const reqReport = () => request({url: '/reports/type/1'});
