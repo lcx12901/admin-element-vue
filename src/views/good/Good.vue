@@ -66,7 +66,8 @@
                             :key="item.attr_id" 
                             :label="item.attr_name"
                         >
-                            <el-input type="text" v-model="item.attr_vals"></el-input>
+                            <el-input type="text" v-model="item.attr_vals" v-if="$route.path == '/goods/addGood'"></el-input>
+                            <el-input type="text" v-model="item.attr_value" v-else-if="$route.path == '/goods/editGood'"></el-input>
                         </el-form-item>
                     </el-tab-pane>
                     <el-tab-pane label="商品图片">
@@ -74,7 +75,7 @@
                                 v-for="(item,key) in fileList"
                                 :key="key"
                                 style="width: 120px; height: 120px; margin:10px; box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)"
-                                :src="item.pics"
+                                :src="item.pic"
                                 fit="fit"></el-image>
                         <el-upload
                             action="/api/private/v1/upload"
@@ -154,10 +155,11 @@ export default {
     mounted () {
         const editor = new E(`#editor`)
         // 实时获取富文本信息
+        
         editor.config.onchange = (newHtml) => {
-            this.goods_introduce = newHtml
+            this.GoodForm.goods_introduce = newHtml
         }
-        // 或者 const editor = new E( document.getElementById('div1') )
+        console.log(this.GoodForm)
         editor.create()
     },
     methods: {
@@ -169,14 +171,13 @@ export default {
         // 编辑商品 ---》 获取对应信息
         async getGoodInfo () {
             const {data} = await reqGood(this.$route.query.id)
-            console.log(data)
             const {goods_id:id, goods_name, goods_price, goods_number, goods_weight, goods_cat, pics, attrs} = data
             pics.map(item => {
                 const {pics_big_url} = item
-                this.fileList.push({pics: pics_big_url})
+                this.fileList.push({pic: pics_big_url})
             })
             this.manyList = attrs.filter( item => item.attr_sel == 'many')
-            this.manyList.forEach( item => item.attr_vals = item.attr_vals.split(' '))
+            this.manyList.forEach( item => item.attr_vals = item.attr_value.split(' '))
             this.onlyList = attrs.filter( item => item.attr_sel == 'only')
             this.GoodForm = {
                 id,
@@ -185,7 +186,7 @@ export default {
                 goods_number,
                 goods_weight,
                 goods_cat: goods_cat.split(','),
-                pics: [],
+                pics,
                 attrs: []
             }
         },
@@ -193,7 +194,7 @@ export default {
         async getManyList () {
             const {data} = await reqAttributes(this.getCatId, 'many')
             data.forEach( item => {
-                item.attr_vals = item.attr_vals ? item.attr_vals.split(" ") : []
+                item.attr_vals = item.attr_vals.split(" ")
             })
             this.manyList = data
         },
@@ -221,13 +222,13 @@ export default {
         // 图片上传
         uploadSuccess (response) {
             const { data } = response
-            this.GoodForm.pics.push({pics: data.tmp_path})
+            this.GoodForm.pics.push({pic: data.tmp_path})
         },
         // 图片移除
         handleRemove (file) {
             const {response} = file
             console.log(response.data.tmp_path)
-            this.GoodForm.pics = this.GoodForm.pics.filter( item => item.pics != response.data.tmp_path)
+            this.GoodForm.pics = this.GoodForm.pics.filter( item => item.pic != response.data.tmp_path)
             // console.log(fileList)
         },
         // 图片预览
@@ -238,10 +239,8 @@ export default {
         // 添加商品 或者 提交编辑商品
         Good () {
             this.$refs['GoodForm'].validate( async (vaild, object) => {
-                console.log(object)
                 if (!vaild) {
                     Object.keys(object).forEach( item => this.$message.error(object[item][0].message))
-                    
                     return
                 }
                 if (vaild) {
@@ -253,9 +252,11 @@ export default {
                         })
                     })
                     this.onlyList.forEach( item => {
+                        let tmp_attr_value
+                        this.isAdd ? tmp_attr_value = item.attr_vals : tmp_attr_value = item.attr_value
                         this.GoodForm.attrs.push({
                             attr_id: item.attr_id,
-                            attr_value: item.attr_vals
+                            attr_value: tmp_attr_value
                         })
                     })
                     let result
