@@ -115,6 +115,7 @@ export default {
             if (path == '/rights') return ['权限管理', '权限列表']
             if (path == '/goods') return ['商品管理', '商品列表']
             if (path == '/goods/addGood') return ['商品管理', '添加商品']
+            if (path == '/goods/editGood') return ['商品管理', '编辑商品']
             if (path == '/params') return ['商品管理', '分类参数']
             if (path == '/categories') return ['商品管理', '商品分类']
             if (path == '/orders') return ['订单管理', '订单列表']
