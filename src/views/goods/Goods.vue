@@ -1,6 +1,5 @@
 <template>
     <div class="goods">
-        <router-view/>
         <el-card class="container" shadow="hover">
             <div>
                 <!-- 数据搜索栏、添加用户功能 -->
@@ -31,8 +30,16 @@
                 </el-table-column>
                 <el-table-column label="操作">
                     <template slot-scope="{row}">
-                        <el-button type="primary" icon="el-icon-edit" circle @click="showEditDialog(row)"></el-button>
-                        <el-button type="danger" icon="el-icon-delete" circle @click="deleteGood(row.goods_id)"></el-button>
+                        <el-button 
+                            type="primary" 
+                            icon="el-icon-edit" 
+                            circle @click="$router.push({path:'/goods/editGood', query: {id: row.goods_id}})"
+                        ></el-button>
+                        <el-button 
+                            type="danger" 
+                            icon="el-icon-delete" 
+                            circle @click="deleteGood(row.goods_id)"
+                        ></el-button>
                     </template>
                 </el-table-column>
             </el-table>
