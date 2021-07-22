@@ -7,15 +7,17 @@
                 border
                 style="width: 100%">
                 <el-table-column type="index" label="#" width="50" />
-                <el-table-column prop="order_number" label="订单流水号"/>
+                <el-table-column prop="order_number" label="订单流水号" width="190"/>
                 <el-table-column prop="order_fapiao_title" label="发票抬头" width="100"/>
-                <el-table-column prop="order_price" label="订单价格" width="100"/>
-                <el-table-column label="发货地址">
+                <el-table-column prop="order_price" label="订单价格" width="90
+                
+                "/>
+                <el-table-column label="发货地址" width="180">
                     <template slot-scope="{row}">
                         <span>{{row.consignee_addr || '无'}}</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="支付方式" width="100">
+                <el-table-column label="支付方式" width="90">
                     <template slot-scope="{row}">
                         <el-tag size="mini" type="danger" v-if="row.order_pay == '0'">未支付</el-tag>
                         <el-tag size="mini" v-else-if="row.order_pay == '1'">支付宝</el-tag>
@@ -23,7 +25,7 @@
                         <el-tag size="mini" type="info" v-else-if="row.order_pay == '3'">银行卡</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="支付状态" width="100">
+                <el-table-column label="支付状态" width="90">
                     <template slot-scope="{row}">
                         <el-tag size="mini" type="danger" v-if="row.pay_status == '0'">未付款</el-tag>
                         <el-tag size="mini" type="success" v-else-if="row.pay_status == '1'">已支付</el-tag>
@@ -34,7 +36,7 @@
                         <el-tag size="mini" :type="row.is_send == '否' ? 'warning' : 'success'">{{row.is_send}}</el-tag>
                     </template>
                 </el-table-column>
-                <el-table-column label="更新时间">
+                <el-table-column label="更新时间" width="120">
                         <template slot-scope="{row}">
                             <span>{{row.update_time | formatDate}}</span>
                         </template>
@@ -43,6 +45,7 @@
                         <template slot-scope="{row}">
                             <el-button size="small" type="primary" @click="showChangeOrder(row)">修改订单</el-button>
                             <el-button size="small" type="info" plain @click="showOrder(row.id)">订单详情</el-button>
+                            <el-button size="small" type="success" plain @click="showKuaidi(row.order_id)">物流信息</el-button>
                         </template>
                 </el-table-column>
             </el-table>
@@ -103,16 +106,22 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button >取 消</el-button>
-                <el-button type="primary" >确 定</el-button>
+                <el-button @click="closeChangeOrderDialog">取 消</el-button>
+                <el-button type="primary" @click="editOrder">确 定</el-button>
             </div>
+        </el-dialog>
+        <el-dialog 
+            title="物流信息"
+            @closed="closeKuaidiDialog()"
+            :visible.sync="showKuaidiDialog"
+        >
         </el-dialog>
     </div>
 </template>
 
 <script>
 // import cityOptions from '@/js/city_data2017_element.js'
-import {reqOrders} from 'network/api.js'
+import {reqOrders, reqEditOrder, reqKuaidi} from 'network/api.js'
 export default {
     name: 'Order',
     data () {
@@ -126,7 +135,8 @@ export default {
             total: 0,
             changeOrderDialog: false,
             changeOrderForm: {},
-            sendFill: ''
+            sendFill: '',
+            showKuaidiDialog: false
         }
     },
     created () {
@@ -164,7 +174,26 @@ export default {
         },
         // 关闭修改订单dialog
         closeChangeOrderDialog () {
-
+            this.changeOrderDialog = false
+        },
+        // 修改订单信息
+        async editOrder () {
+            const send_status = ['否', '是']
+            this.changeOrderForm.is_send = send_status.indexOf(this.changeOrderForm.is_send)
+            const {meta} = await reqEditOrder(this.changeOrderForm)
+            if (meta.status != 201) return
+            this.changeOrderDialog = false
+            this.getOrders()
+        },
+        // 查看物流信息
+        async showKuaidi () {
+            const {data} = await reqKuaidi(1106975712662)
+            this.kuaidi = data
+            this.showKuaidiDialog = true
+        },
+        // 关闭物流信息dialog
+        closedKuaidiDialog () {
+            this.showKuaidiDialog = false
         }
     },
     computed: {
@@ -180,7 +209,7 @@ export default {
             return false
         },
         getStatus () {
-             return this.changeOrderForm.pay_status == '0' ? ['#fef0f0', '#f56c6c'] : ['#f0f9eb', '#67c23a']
+            return this.changeOrderForm.pay_status == '0' ? ['#fef0f0', '#f56c6c'] : ['#f0f9eb', '#67c23a']
         }
     }
 }
