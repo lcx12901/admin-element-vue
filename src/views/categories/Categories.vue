@@ -17,9 +17,9 @@
                     <el-tag size="mini" type="success" v-else-if="row.cat_level == 1">二级</el-tag>
                     <el-tag size="mini" type="warning" v-else>三级</el-tag>
                 </template>
-                <template slot="opt">
-                    <el-button type="primary" icon="el-icon-edit" size="mini">编辑</el-button>
-                    <el-button type="danger" icon="el-icon-delete" size="mini">删除</el-button>
+                <template slot="opt" slot-scope="{row}">
+                    <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(row)">编辑</el-button>
+                    <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteCategories(row.cat_id)">删除</el-button>
                 </template>
             </zk-table>
             <!--分页-->
@@ -38,7 +38,7 @@
             @closed="closeAddDialog()"
             :visible.sync="addCateDialog"
         >
-            <el-form :model="addCateForm" :rules="addCateRules" label-position="left" ref="addCateForm">
+            <el-form :model="addCateForm" :rules="cateRules" label-position="left" ref="addCateForm">
                 <el-form-item label="分类名称" prop="cat_name">
                     <el-input type="name" v-model="addCateForm.cat_name" autocomplete="off"></el-input>
                 </el-form-item>
@@ -54,15 +54,29 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
-                <el-button @click="closeDialog">取 消</el-button>
+                <el-button @click="closeAddDialog">取 消</el-button>
                 <el-button type="primary" @click="addCategories">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog
+            title="编辑分类"
+            :visible.sync="editCateDialog"
+        >
+            <el-form :model="editCateForm" :rules="cateRules" label-position="left" ref="editCateForm">
+                <el-form-item label="分类名称" prop="cat_name">
+                    <el-input type="name" v-model="editCateForm.cat_name" autocomplete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="closeEditDialog">取 消</el-button>
+                <el-button type="primary" @click="editCategories">确 定</el-button>
             </div>
         </el-dialog>
     </div>
 </template>
 
 <script>
-import {reqCategories, reqAddCategories} from 'network/api.js'
+import {reqCategories, reqAddCategories, reqEditCategories, reqDeleteCategories} from 'network/api.js'
 
 export default {
     name: 'Categories',
@@ -97,6 +111,7 @@ export default {
                 }
             ],
             addCateDialog: false,
+            editCateDialog: false,
             categories: [],  // 选中的商品分类
             addCascader: [], // 商品分类级联选择器
             addCateForm: {
@@ -104,7 +119,11 @@ export default {
                 cat_name: '',
                 cat_level: 0
             },
-            addCateRules: {
+            editCateForm: {
+                id: 0,
+                cat_name: ''
+            },
+            cateRules: {
                 cat_name: [
                     {required: true, message: '请输入分类名称', trigger: 'blur'}
                 ]
@@ -137,7 +156,7 @@ export default {
             this.addCascader = data
         },
         // 关闭添加分类的dialog
-        closeDialog () {
+        closeAddDialog () {
             this.addCateDialog = false  // 关闭dialog
             this.addCateForm = {  // 初始化表单
                 cat_pid: 0,
@@ -158,6 +177,37 @@ export default {
                     this.addCateDialog = false
                 }
             })
+        },
+        // 显示商品分类编辑dialog
+        showEditDialog (row) {
+            this.editCateDialog = true
+            const {cat_id:id, cat_name} = row
+            this.editCateForm = {
+                id,
+                cat_name
+            }
+        },
+        // 关闭商品分类编辑
+        closeEditDialog () {
+            this.editCateDialog = false
+        },
+        // 商品分类编辑提交
+        editCategories () {
+            this.$refs['editCateForm'].validate( async (valid) => {
+                if (valid) {
+                    const {id, cat_name} = this.editCateForm
+                    const {meta} = await reqEditCategories(id, cat_name)
+                    if (meta.status != 200) return
+                    this.editCateDialog = false
+                    this.getCategories()
+                }
+            })
+        },
+        // 删除商品分类
+        async deleteCategories (id) {
+            const {meta} = await reqDeleteCategories(id)
+            if (meta.status != 200) return
+            this.getCategories()
         }
     }
 }
