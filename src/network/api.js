@@ -83,5 +83,7 @@ export const reqEditOrder = (data) => request({url: `orders/${data.id}`, method:
 // 查看订单详情
 export const reqOrderInfo = (id) => request({url: `orders/${id}`}); 
 
+// 查看物流信息
+export const reqKuaidi = (id) => request({url: `/kuaidi/${id}`});
 // reports/type/1
 export const reqReport = () => request({url: '/reports/type/1'});
