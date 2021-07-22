@@ -13,7 +13,8 @@ const Params = () => import('views/params/Params.vue')
 const Orders = () => import('views/orders/Orders.vue')
 const Goods = () => import('views/goods/Goods.vue')
 const Categories = () => import('views/categories/Categories.vue')
-const AddGood = () => import('views/addGood/AddGood.vue')
+const AddGood = () => import('views/good/Good.vue')
+const EditGood = () => import('views/good/Good.vue')
 const NotFound = () => import('views/notFound/NotFound.vue')
 Vue.use(VueRouter)
 
@@ -110,7 +111,15 @@ const routes = [
       {
         path: '/goods/addGood',
         component: AddGood,
-        name: 'AddGood',
+        name: 'Good',
+        meta: {
+          isLogin: true
+        }
+      },
+      {
+        path: '/goods/editGood',
+        component: EditGood,
+        name: 'Good',
         meta: {
           isLogin: true
         }
