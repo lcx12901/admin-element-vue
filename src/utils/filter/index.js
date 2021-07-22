@@ -13,5 +13,8 @@ Vue.filter('formatDate', (value) => {
     if (day < 10) {
         day = "0" + day;
     }
+    if (minutes < 10) {
+        minutes = '0' + minutes;
+    }
     return year + "-" + month + "-" + day + " " + hours + ":" + minutes;
 })
