@@ -20,6 +20,12 @@ export default {
     methods: {
         async getReport () {
             const {data, meta} = await reqReport()
+            data.series.map( item => {
+                item.emphasis = {
+                    focus: 'series'
+                }
+                console.log(item)
+            })
             var chartDom = document.getElementById('main')
             
             var myChart = echarts.init(chartDom)
