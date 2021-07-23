@@ -18,6 +18,20 @@ const EditGood = () => import('views/good/Good.vue')
 const NotFound = () => import('views/notFound/NotFound.vue')
 Vue.use(VueRouter)
 
+
+const authRoutersList = {
+  users: {path: '/users', component: Users, name: 'Users'},
+  roles: {path: '/roles', component: Roles, name: 'Roles'},
+  rights: {path: '/rights', component: Rights, name: 'Rights'},
+  goods: {path: '/goods', component: Goods, name: 'Goods'},
+  params: {path: '/params', component: Params, name: 'Params'},
+  categories: {path: '/categories', component: Categories, name: 'Categories'},
+  orders: {path: '/orders', component: Orders, name: 'Orders'},
+  reports: {path: '/reports', component: Reports, name: 'Reports'},
+  addGood: {path: '/goods/addGood',component: AddGood,name: 'Good'},
+  editGood: {path: '/goods/editGood',component: EditGood,name: 'Good'}
+}
+
 const routes = [
   {
     path: '/',
@@ -36,94 +50,17 @@ const routes = [
       isLogin: true
     },
     children: [
-      {
-        path: '/welcome',
-        component: Welcome,
-        name: 'Welcome',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/users',
-        component: Users,
-        name: 'Users',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/roles',
-        component: Roles,
-        name: 'Roles',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/rights',
-        component: Rights,
-        name: 'Rights',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/reports',
-        component: Reports,
-        name: 'Reports',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/params',
-        component: Params,
-        name: 'Params',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/orders',
-        component: Orders,
-        name: 'Orders',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/goods',
-        component: Goods,
-        name: 'Goods',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/categories',
-        component: Categories,
-        name: 'Categories',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/goods/addGood',
-        component: AddGood,
-        name: 'Good',
-        meta: {
-          isLogin: true
-        }
-      },
-      {
-        path: '/goods/editGood',
-        component: EditGood,
-        name: 'Good',
-        meta: {
-          isLogin: true
-        }
-      }
+      {path: '/welcome',component: Welcome,name: 'Welcome'},
+      // {path: '/users',component: Users,name: 'Users'},
+      // {path: '/roles',component: Roles,name: 'Roles'},
+      // {path: '/rights',component: Rights,name: 'Rights'},
+      // {path: '/reports',component: Reports,name: 'Reports'},
+      // {path: '/params',component: Params,name: 'Params'},
+      // {path: '/orders',component: Orders,name: 'Orders'},
+      // {path: '/goods',component: Goods,name: 'Goods'},
+      // {path: '/categories',component: Categories,name: 'Categories',},
+      // {path: '/goods/addGood',component: AddGood,name: 'Good'},
+      // {path: '/goods/editGood',component: EditGood,name: 'Good'}
     ]
   },
   {
@@ -166,5 +103,21 @@ router.afterEach(() => {
   // 在即将进入新的页面组件前，关闭掉进度条
   NProgress.done()
 })
+
+
+export const authDynamicRouter = () => {
+  const routes = router.options.routes
+  // routes[2].children.push()
+  const authMenusList = JSON.parse(sessionStorage.getItem("authMenus"))
+  console.log(authMenusList)
+  authMenusList.forEach(item => {
+    item.children.forEach(citem => {
+      routes[2].children.push(authRoutersList[citem.path])
+    })
+  })
+  //让新的路由规则起效
+  router.addRoutes(routes)
+}
+
 
 export default router
