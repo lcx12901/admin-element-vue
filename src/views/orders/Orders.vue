@@ -14,6 +14,7 @@
                 "/>
                 <el-table-column label="发货地址" width="180">
                     <template slot-scope="{row}">
+                        <!-- {{eval(row.consignee_addr)}} -->
                         <span>{{row.consignee_addr || '无'}}</span>
                     </template>
                 </el-table-column>
@@ -94,7 +95,7 @@
                 <el-form-item label="订单流水号">
                     <el-input type="text" v-model="changeOrderForm.order_number" autocomplete="off"></el-input>
                 </el-form-item>
-                <el-form-item  label="订单支付状态:">
+                <!-- <el-form-item  label="订单支付状态:">
                     <el-radio-group 
                         v-model="changeOrderForm.pay_status" 
                         :fill="getStatus[0]"
@@ -103,7 +104,7 @@
                         <el-radio-button label="0">未付款</el-radio-button>
                         <el-radio-button label="1">已付款</el-radio-button>
                     </el-radio-group>
-                </el-form-item>
+                </el-form-item> -->
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click="closeChangeOrderDialog">取 消</el-button>
@@ -161,14 +162,13 @@ export default {
         },
         // 显示修改订单dialog
         showChangeOrder (order) {
-            const {order_id:id, is_send, order_pay, order_price, order_number, pay_status} = order
+            const {order_id:id, is_send, order_pay, order_price, order_number} = order
             this.changeOrderForm = Object.assign({
                 id,
                 is_send,
                 order_pay,
                 order_price,
-                order_number,
-                pay_status
+                order_number
             })
             this.changeOrderDialog = true
         },
@@ -187,7 +187,7 @@ export default {
         },
         // 查看物流信息
         async showKuaidi () {
-            const {data} = await reqKuaidi(1106975712662)
+            const {data} = await reqKuaidi()
             this.kuaidi = data
             this.showKuaidiDialog = true
         },
