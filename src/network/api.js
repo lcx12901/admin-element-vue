@@ -29,11 +29,26 @@ export const reqDelUser = (id) => request({url: `/users/${id}`, method: 'delete'
 // 请求用户角色列表
 export const reqRoles = () => request({url: '/roles', method: 'get'});
 
+// 添加用户角色
+export const reqAddRole = (data) => request({url: '/roles', method: 'post', data});
+
+// 编辑用户角色
+export const reqEditRole = (id, data) => request({url: `/roles/${id}`, method: 'put', data});
+
+// 删除用户角色
+export const reqDeleteRole =(id) => request({url: `/roles/${id}`, method: 'delete'});
+
 // 分配用户角色
-export const reqSetUserRole = (id,rid) => request({url: `users/${id}/role`, method: 'put', data: {rid}});
+export const reqSetUserRole = (id,rid) => request({url: `/users/${id}/role`, method: 'put', data: {rid}});
 
 // 所有权限列表
-export const reqRights = (type) => request({url: `rights/${type}`});
+export const reqRights = (type) => request({url: `/rights/${type}`});
+
+// 删除角色对应权限
+export const reqDeleteRight = (roleId, rightId) => request({url: `roles/${roleId}/rights/${rightId}`, method: 'delete'});
+
+// 分配角色权限
+export const reqAssignRights = (roleId, rids) => request({url: `roles/${roleId}/rights`, method: 'post', data: {rids}});
 
 // 商品列表数据
 export const reqGoods = (params) => request({url: '/goods', params});
