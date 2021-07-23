@@ -28,8 +28,7 @@ const authRoutersList = {
   categories: {path: '/categories', component: Categories, name: 'Categories'},
   orders: {path: '/orders', component: Orders, name: 'Orders'},
   reports: {path: '/reports', component: Reports, name: 'Reports'},
-  addGood: {path: '/goods/addGood',component: AddGood,name: 'Good'},
-  editGood: {path: '/goods/editGood',component: EditGood,name: 'Good'}
+
 }
 
 const routes = [
@@ -51,6 +50,8 @@ const routes = [
     },
     children: [
       {path: '/welcome',component: Welcome,name: 'Welcome'},
+      {path: '/goods/editGood',component: EditGood,name: 'Good'},
+      {path: '/goods/addGood',component: AddGood,name: 'Good'},
       // {path: '/users',component: Users,name: 'Users'},
       // {path: '/roles',component: Roles,name: 'Roles'},
       // {path: '/rights',component: Rights,name: 'Rights'},
@@ -107,9 +108,7 @@ router.afterEach(() => {
 
 export const authDynamicRouter = () => {
   const routes = router.options.routes
-  // routes[2].children.push()
   const authMenusList = JSON.parse(sessionStorage.getItem("authMenus"))
-  console.log(authMenusList)
   authMenusList.forEach(item => {
     item.children.forEach(citem => {
       routes[2].children.push(authRoutersList[citem.path])
