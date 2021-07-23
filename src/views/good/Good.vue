@@ -161,6 +161,7 @@ export default {
         }
         console.log(this.GoodForm)
         editor.create()
+        
     },
     methods: {
         // 获取商品分类列表
@@ -171,7 +172,8 @@ export default {
         // 编辑商品 ---》 获取对应信息
         async getGoodInfo () {
             const {data} = await reqGood(this.$route.query.id)
-            const {goods_id:id, goods_name, goods_price, goods_number, goods_weight, goods_cat, pics, attrs} = data
+            console.log(data)
+            const {goods_id:id, goods_name, goods_price, goods_number, goods_weight, goods_cat, goods_introduce, pics, attrs} = data
             pics.map(item => {
                 const {pics_big_url} = item
                 this.fileList.push({pic: pics_big_url})
@@ -185,6 +187,7 @@ export default {
                 goods_price,
                 goods_number,
                 goods_weight,
+                goods_introduce,
                 goods_cat: goods_cat.split(','),
                 pics,
                 attrs: []
