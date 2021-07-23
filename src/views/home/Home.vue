@@ -69,6 +69,7 @@
 
 <script>
 import {reqMenus} from 'network/api.js'
+import {authDynamicRouter} from "@/router/index"
 export default {
     name: 'Home',
     data () {
@@ -100,6 +101,8 @@ export default {
         async getMenu () {
             const {data} = await reqMenus()
             this.menus = data
+            sessionStorage.setItem("authMenus",JSON.stringify(data))
+            authDynamicRouter()
            
         },
         // 点击侧边栏激活当前路由
